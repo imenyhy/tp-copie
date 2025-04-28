@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter un utilisateur</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        a {
+            display: inline-block;
+            text-align: center;
+            margin-top: 10px;
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Ajouter un nouvel utilisateur</h1>
+    <form th:action="@{/users/save}" th:object="${user}" method="post">
+        <div>
+            <label>Nom :</label>
+            <input type="text" th:field="*{name}" required/>
+        </div>
+        <div>
+            <label>Email :</label>
+            <input type="email" th:field="*{email}" required/>
+        </div>
+        <div>
+            <label>Mot de passe :</label>
+            <input type="password" th:field="*{password}" required/>
+        </div>
+        <div>
+            <label>Rôle :</label>
+            <select name="selectedRole" required>
+                <option th:each="role : ${allRoles}" th:value="${role.id}" th:text="${role.name}"></option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Ajouter</button>
+        </div>
+    </form>
+    <a href="/users/view">Retour à la liste</a>
+</div>
+</body>
+</html>

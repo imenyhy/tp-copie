@@ -1,0 +1,13 @@
+### Récupérer tous les utilisateurs
+GET http://localhost:8080/api/users
+Accept: application/json
+
+### Ajouter un utilisateur
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "username": "nouveauuser",
+  "password": "motdepasse",
+  "roles": [{"id": 1}]
+}
