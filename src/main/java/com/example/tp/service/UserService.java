@@ -3,6 +3,7 @@ package com.example.tp.service;
 import com.example.tp.entity.User;
 import com.example.tp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,22 +15,24 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // Récupérer tous les utilisateurs
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // Sauvegarder un utilisateur
+    // Sauvegarder un utilisateur avec mot de passe encodé
     public User saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    // Récupérer un utilisateur par ID (optionnel pour l'API)
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
-    // Supprimer un utilisateur par ID (optionnel pour l'API)
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }

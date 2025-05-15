@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 public class WebController {
@@ -25,31 +26,31 @@ public class WebController {
     // Page d'accueil
     @GetMapping("/home")
     public String home() {
-        return "home"; // Vue d'accueil
+        return "home";
     }
 
     // Page de login
     @GetMapping("/login")
     public String login() {
-        return "login"; // Vue de login
+        return "login";
     }
 
-    // Affichage des utilisateurs (nouvelle route)
+    // Liste des utilisateurs
     @GetMapping("/users/all")
     public String viewUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
-        return "users"; // Vue de la liste des utilisateurs
+        return "users";
     }
 
-    // Formulaire d'ajout d'utilisateur
+    // Formulaire d'ajout d'utilisateur (admin)
     @GetMapping("/users/add")
     public String showAddUserForm(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("allRoles", roleRepository.findAll());
-        return "add-user"; // Vue pour ajouter un utilisateur
+        return "add-user";
     }
 
-    // Sauvegarde de l'utilisateur avec le rôle
+    // Sauvegarde utilisateur avec rôle sélectionné (admin)
     @PostMapping("/users/save")
     public String saveUser(@Valid @ModelAttribute("user") User user,
                            BindingResult result,
@@ -57,17 +58,51 @@ public class WebController {
                            Model model) {
         if (result.hasErrors()) {
             model.addAttribute("allRoles", roleRepository.findAll());
-            return "add-user"; // Retourner au formulaire en cas d'erreur
+            return "add-user";
         }
 
-        // Assigner un rôle à l'utilisateur
         Role selectedRole = roleRepository.findById(roleId).orElse(null);
         if (selectedRole != null) {
-            user.setRoles(new HashSet<>());
-            user.getRoles().add(selectedRole); // Ajouter le rôle sélectionné
+            Set<Role> roles = new HashSet<>();
+            roles.add(selectedRole);
+            user.setRoles(roles);
         }
 
-        userService.saveUser(user); // Sauvegarder l'utilisateur
-        return "redirect:/users/all"; // Rediriger vers la vue des utilisateurs
+        userService.saveUser(user);
+        return "redirect:/users/all";
+    }
+
+    // Formulaire d'inscription (public)
+    @GetMapping("/register")
+    public String showRegisterForm(Model model) {
+        model.addAttribute("user", new User());
+        return "register";
+    }
+
+    // Traitement de l'inscription (public)
+    @PostMapping("/register")
+    public String registerUser(@Valid @ModelAttribute("user") User user,
+                               BindingResult result,
+                               Model model) {
+        if (result.hasErrors()) {
+            return "register";
+        }
+
+        // Vérifie si l'email est déjà utilisé
+        boolean emailExists = userService.getAllUsers().stream()
+                .anyMatch(u -> u.getEmail().equalsIgnoreCase(user.getEmail()));
+        if (emailExists) {
+            model.addAttribute("error", "Cet email est déjà utilisé.");
+            return "register";
+        }
+
+        // Affecter le rôle USER
+        Role userRole = roleRepository.findByName("USER").orElse(null);
+        if (userRole != null) {
+            user.setRoles(Set.of(userRole));
+        }
+
+        userService.saveUser(user);
+        return "redirect:/login?registered";
     }
 }

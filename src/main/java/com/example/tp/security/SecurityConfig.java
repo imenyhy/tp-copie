@@ -21,25 +21,25 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")  // Accès restreint aux admins
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login") // Page personnalisée pour le login
-                        .defaultSuccessUrl("/home", true) // Redirection après la connexion
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/home", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/login?logout") // Redirection après la déconnexion
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
-                .userDetailsService(customUserDetailsService); // Utilisation du CustomUserDetailsService pour la gestion de l'authentification
+                .userDetailsService(customUserDetailsService);
 
         return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Utilisation de BCrypt pour l'encodage des mots de passe
+        return new BCryptPasswordEncoder();
     }
 }

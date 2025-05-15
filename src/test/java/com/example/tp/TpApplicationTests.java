@@ -9,5 +9,4 @@ class TpApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

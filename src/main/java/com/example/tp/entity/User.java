@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Table(name = "users") // 🔧 Correction ici pour éviter le mot réservé "user"
 public class User {
 
     @Id
@@ -22,7 +23,7 @@ public class User {
     private String email;
 
     @NotBlank(message = "Le mot de passe est obligatoire")
-    private String password; // Ajout du champ password
+    private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -32,12 +33,15 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
+    // ✅ Constructeur vide (obligatoire pour JPA)
     public User() {}
 
+    // ✅ Constructeur avec initialisation du Set
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.roles = new HashSet<>();
     }
 
     // Getters et Setters
